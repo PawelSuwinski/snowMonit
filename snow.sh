@@ -65,10 +65,10 @@ find $TMPDIR -name "${FILE%-*}*" -mtime +1 -delete  &>> "$TMPDIR/$LOG" || true
 # parse pdf
 pdftohtml -s -stdout "$TMPDIR/$FILE" 2>> "$TMPDIR/$LOG" | 
   sed -n 's#.*left:\([3-5][0-9]\|5[4-9][0-9]\|6[0-4][0-9]\)px.*>\([^>]\+\)</p>#:\1 \2#p' | 
-  tr "\n" ' ' | sed -e "s/:[3-5][0-9] /\n/g" -e 's/:[0-9]\+ //g' -e 's/&#160;/ /g' |
+  tr -d "\n" | sed -e "s/:[3-5][0-9] /\n/g" -e 's/:[0-9]\+ /:/g' -e 's/&#160;/ /g' |
   grep  -iE "$PATTERN" |
   while read row; do
-    ROW=($row)
+    IFS=':' ROW=($row)
     [[ -n $MIN && ${ROW[1]%,*} -lt $MIN && ${ROW[2]%,*} -lt $MIN ]] && continue
     echo "${ROW[0]}: ${ROW[1]} / ${ROW[2]} [cm]"
   done
