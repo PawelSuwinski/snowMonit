@@ -18,6 +18,7 @@ Android [termux](https://termux.com) shell:
 pkg install poppler bash wget busybox
 wget https://raw.githubusercontent.com/PawelSuwinski/snowMonit/main/snow.sh
 chmod a+x snow.sh
+./snow.sh -h
 ```
 
 ## Usage example:
@@ -30,7 +31,7 @@ chmod a+x snow.sh
 
 `./snow.sh milejewo chojnice`
 
-### Send notification when cover meets requirements 
+### Send notification when cover meets requirements:
 
 Cronjob / termux-job-sheduler case.
 
