@@ -11,7 +11,7 @@ URL='https://res4.imgw.pl/products/hydro/monitor-lite-products/Pokrywa_sniezna.p
 
 usage() {
   cat <<EOT
-Usage: $0 [-h] [-f] [-m MIN] [-u URL] [station ...] 
+Usage: $0 [-h] [-f] [-m MIN] [-u URL] [station ...]
 
    -h      help
    -f      skip cache and fetch pdf file
@@ -22,7 +22,7 @@ Usage: $0 [-h] [-f] [-m MIN] [-u URL] [station ...]
 EOT
 }
 
-# input options 
+# input options
 while getopts "hfm:u:" opt
 do
   case $opt in
@@ -33,7 +33,7 @@ do
       [[ ! $OPTARG =~ ^[1-9][0-9]*$ ]] && \
         echo "MIN: integer value expected!" && exit 1
       MIN=$OPTARG
-      ;; 
+      ;;
     u)
       URL=$OPTARG
       ;;
@@ -54,13 +54,13 @@ PATTERN='^ +[0-9]'
 
 
 # log timestamp
-date '+%Y%m%d%H%M%S' >> "$TMPDIR/$LOG" 
+date '+%Y%m%d%H%M%S' >> "$TMPDIR/$LOG"
 
 # clean temp files older than one day
-find $TMPDIR -name "${FILE%-*}*" -mtime +1 -delete  &>> "$TMPDIR/$LOG"
+find $TMPDIR -name "${FILE%-*}*" -mtime +1 -delete  &>> "$TMPDIR/$LOG" || true
 
 # fetch pdf
-[[ ! -s "$TMPDIR/$FILE" || -n $FETCH ]] && 
+[[ ! -s "$TMPDIR/$FILE" || -n $FETCH ]] &&
   wget -a "$TMPDIR/$LOG" -O "$TMPDIR/$FILE" "${URL}"
 
 # parse pdf
@@ -70,4 +70,4 @@ pdftotext -layout "$TMPDIR/$FILE" - 2>> "$TMPDIR/$LOG" | grep  -iE "$PATTERN" |
     row=${row//; /;}; IFS=';' ROW=($row)
     [[ -n $MIN && ${ROW[6]%,*} -lt $MIN && ${ROW[7]%,*} -lt $MIN ]] && continue
     echo "${ROW[1]}: ${ROW[6]} / ${ROW[7]} [cm]"
-  done 
+  done
