@@ -27,11 +27,11 @@ chmod a+x snow.sh
 
 `./snow.sh -m 10`
 
-### Show chosen stations: 
+### Show chosen stations
 
 `./snow.sh milejewo chojnice`
 
-### Send notification when cover meets requirements:
+### Send notification when cover meets requirements
 
 Cronjob / termux-job-sheduler case.
 
