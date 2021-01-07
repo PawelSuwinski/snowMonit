@@ -2,7 +2,7 @@
 Simple parser of snow cover table from [hydro.imgw.pl](https://hydro.imgw.pl) website.
 
 
-## Requirements:
+## Requirements
  
  - pdftotext (poppler/poppler-utils  package)
  - wget (full version)
@@ -21,7 +21,7 @@ chmod a+x snow.sh
 ./snow.sh -h
 ```
 
-## Usage example:
+## Usage example
 
 ### Show all stations with snow cover greater than 10cm
 
