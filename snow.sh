@@ -63,7 +63,7 @@ find $TMPDIR -name "${FILE%-*}*" -mtime +1 -delete  &>> "$TMPDIR/$LOG" || true
   wget -a "$TMPDIR/$LOG" -O "$TMPDIR/$FILE" "${URL}"
 
 # parse pdf
-pdftohtml -s -stdout $TMPDIR/$FILE" 2>> "$TMPDIR/$LOG" | 
+pdftohtml -s -stdout "$TMPDIR/$FILE" 2>> "$TMPDIR/$LOG" | 
   sed -n 's#.*left:\([3-5][0-9]\|5[4-9][0-9]\|6[0-4][0-9]\)px.*>\([^>]\+\)</p>#:\1 \2#p' | 
   tr "\n" ' ' | sed -e "s/:[3-5][0-9] /\n/g" -e 's/:[0-9]\+ //g' -e 's/&#160;/ /g' |
   grep  -iE "$PATTERN" |
