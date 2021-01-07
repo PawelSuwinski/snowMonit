@@ -49,8 +49,7 @@ FILE="$(basename $0)-$(date +%Y%m%d).pdf"
 LOG="${FILE%.*}.log"
 
 # PRCE pattern
-PATTERN='^ +[0-9]'
-[[ -n $1 ]] && PATTERN+=".*($(IFS='|'; echo "$*"))"
+[[ -n $1 ]] && PATTERN="($(IFS='|'; echo "$*"))" || PATTERN='.*'
 
 
 # log timestamp
@@ -64,10 +63,12 @@ find $TMPDIR -name "${FILE%-*}*" -mtime +1 -delete  &>> "$TMPDIR/$LOG" || true
   wget -a "$TMPDIR/$LOG" -O "$TMPDIR/$FILE" "${URL}"
 
 # parse pdf
-pdftotext -layout "$TMPDIR/$FILE" - 2>> "$TMPDIR/$LOG" | grep  -iE "$PATTERN" |
-  while read row; do echo ${row//  /;}; done  | tr -s ';' |
+pdftohtml -s -stdout $TMPDIR/$FILE" 2>> "$TMPDIR/$LOG" | 
+  sed -n 's#.*left:\([3-5][0-9]\|5[4-9][0-9]\|6[0-4][0-9]\)px.*>\([^>]\+\)</p>#:\1 \2#p' | 
+  tr "\n" ' ' | sed -e "s/:[3-5][0-9] /\n/g" -e 's/:[0-9]\+ //g' -e 's/&#160;/ /g' |
+  grep  -iE "$PATTERN" |
   while read row; do
-    row=${row//; /;}; IFS=';' ROW=($row)
-    [[ -n $MIN && ${ROW[6]%,*} -lt $MIN && ${ROW[7]%,*} -lt $MIN ]] && continue
-    echo "${ROW[1]}: ${ROW[6]} / ${ROW[7]} [cm]"
+    ROW=($row)
+    [[ -n $MIN && ${ROW[1]%,*} -lt $MIN && ${ROW[2]%,*} -lt $MIN ]] && continue
+    echo "${ROW[0]}: ${ROW[1]} / ${ROW[2]} [cm]"
   done
