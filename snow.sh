@@ -77,7 +77,7 @@ val() { local V=${1##*:${2}:}; echo -n "${V%%:*}"; }
   tr -d "\n" | sed 's/:B:/\n/g' | while read row; do
     G=0; H=0
     [[ -z $DATE && $row == *:DATE:[0-9]* ]] &&
-      val "$row" 'DATE' && echo && continue
+      val "$row" 'DATE' && echo
     [[ $row == *:G:[0-9]* ]] && G=$(val "$row" 'G')
     [[ $row == *:H:[0-9]* ]] && H=$(val "$row" 'H')
     [[ $G =~ ^0(,0)?$ && $H =~ ^0(,0)?$ ]] && continue
