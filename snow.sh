@@ -9,6 +9,7 @@ set -e
 
 URL='https://res4.imgw.pl/products/hydro/monitor-lite-products/Pokrywa_sniezna.pdf'
 DATETIME=$(date '+%Y%m%d%H%M%S')
+FORMAT='%s: %.0f / %0.f [cm]\n'
 
 [[ -z $TMPDIR ]] && TMPDIR='/tmp'
 fileName="$(basename $0)-${DATETIME:0:8}"
@@ -16,12 +17,12 @@ filePath="$TMPDIR/$fileName"
 
 usage() {
   cat <<EOT
-Usage: $0 [-h] [-f] [-m MIN] [-u URL] [station ...]
+Usage: $0 [-h] [-f FORMAT] [-m MIN] [-u URL] [station ...]
 
-   -h      help
-   -f      skip cache, force fetch and parse pdf file
-   -m MIN  mininum depth [cm]
-   -u URL  data url, default: $URL
+   -h        help
+   -f FORMAT printf output format, default '$FORMAT'
+   -m MIN    mininum depth [cm]
+   -u URL    data url, default: $URL
 
   station  station pcre pattern to match (case insensitive)
 
@@ -34,7 +35,7 @@ EOT
 }
 
 # input options
-while getopts "hfm:u:" opt
+while getopts "hf:m:u:" opt
 do
   case $opt in
     h)
@@ -49,7 +50,7 @@ do
       URL=$OPTARG
       ;;
     f)
-      FETCH=1
+      FORMAT=$OPTARG
       ;;
   esac
 done
@@ -65,7 +66,7 @@ find $TMPDIR -name "${fileName%-*}-*" -mtime +1 -delete || true
 # fetch pdf and parse to csv, force if data is old
 sedCmd() { echo -n "s#.*left:${1}px.*>([^>]+)</p>#:${2}:\1#p"; }
 val() { local V=${1##*:${2}:}; echo -n "${V%%:*}"; }
-[[ ! -s "${filePath}.csv" || -n $FETCH || $(head -1 "${filePath}.csv") != ${DATETIME:0:8} ]] &&
+[[ ! -s "${filePath}.csv" || $(head -1 "${filePath}.csv") != ${DATETIME:0:8} ]] &&
   wget -a "${filePath}.log" -O "${filePath}.pdf" "${URL}" &&
   pdftohtml -i -s -stdout "${filePath}.pdf" | sed -nr \
     -e 's/&#160;/ /g' \
@@ -86,10 +87,11 @@ val() { local V=${1##*:${2}:}; echo -n "${V%%:*}"; }
 # parse output
 parse() {
   read DATE;
+  LC_NUMERIC=C
   IFS=';'; while read B G H; do
     [[ -n $MIN && ${G%,*} -lt $MIN && ${H%,*} -lt $MIN ]] && continue
     [[ -n $DATE ]] && echo $DATE && unset DATE
-    echo "$B: $G / $H [cm]"
+    printf "$FORMAT" "$B" "${G/,/.}" "${H/,/.}"
   done
 }
 [[ -z $1 ]] && parse < "${filePath}.csv" ||
