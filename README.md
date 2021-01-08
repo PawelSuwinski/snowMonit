@@ -4,9 +4,9 @@ Simple parser of snow cover table from [hydro.imgw.pl](https://hydro.imgw.pl) we
 
 ## Requirements
  
- - pdftotext (poppler/poppler-utils  package)
- - wget (full version)
- - tr, grep, find (standalone from coreutils or busybox)
+ - pdftotext >= 20.0.0 (poppler/poppler-utils package)
+ - wget (full version for SSL support, tested with ^1.20)
+ - sed, grep, find, sort, tr, date, basename (standalone or busybox)
  - bash
 
 
