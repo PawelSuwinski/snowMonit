@@ -75,7 +75,8 @@ val() { local V=${1##*:${2}:}; echo -n "${V%%:*}"; }
     -e "$(sedCmd '6[0-4][0-9]' 'H')" |
   tr -d "\n" | sed 's/:B:/\n/g' | while read row; do
     G=0; H=0
-    [[ -z $DATE && $row == *:DATE:[0-9]* ]] && DATE=$(val "$row" 'DATE') && echo $DATE
+    [[ -z $DATE && $row == *:DATE:[0-9]* ]] &&
+      val "$row" 'DATE' && echo && continue
     [[ $row == *:G:[0-9]* ]] && G=$(val "$row" 'G')
     [[ $row == *:H:[0-9]* ]] && H=$(val "$row" 'H')
     [[ $G =~ ^0(,0)?$ && $H =~ ^0(,0)?$ ]] && continue
@@ -84,10 +85,12 @@ val() { local V=${1##*:${2}:}; echo -n "${V%%:*}"; }
 
 # parse output
 parse() {
+  read DATE;
   IFS=';'; while read B G H; do
     [[ -n $MIN && ${G%,*} -lt $MIN && ${H%,*} -lt $MIN ]] && continue
+    [[ -n $DATE ]] && echo $DATE && unset DATE
     echo "$B: $G / $H [cm]"
   done
 }
-[[ -n $1 ]] && grep -iE "($(IFS='|'; echo "$*"))" "${filePath}.csv" | parse ||
-  parse < "${filePath}.csv"
+[[ -z $1 ]] && parse < "${filePath}.csv" ||
+  grep -iE "(^[1-9][0-9]+\$|$(IFS='|'; echo -n "$*"))" "${filePath}.csv" | parse
