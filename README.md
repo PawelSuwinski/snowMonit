@@ -12,9 +12,9 @@ Simple parser of snow cover table from [hydro.imgw.pl](https://hydro.imgw.pl) we
 
 ## Installation - Android
 
-1. Install [Termux](https://termux.com) and Termux Widget add-on
+1. Install [Termux](https://termux.com) and Termux Widget add-on.
 
-2. In Termux shell execute:
+2. Open Termux and execute:
 
 ```
 pkg install poppler bash wget busybox
@@ -25,7 +25,7 @@ chmod a+x snow.sh
 
 ### Desktop shortcut icon
 
-1. Termux shell:
+1. Open Termux and execute:
 
 ```
 mkdir .shortcuts
@@ -33,7 +33,7 @@ echo -e "#\!/data/data/com.termux/files/usr/bin/bash\nbash ~/snow.sh -m 10\nread
 chmod a+x  .shortcuts/snow
 ```
 
-2. On desktop add Termux Widget pointing to _snow_ shortcut.
+2. Add Termux Widget to desktop pointing to _snow_ shortcut.
 
 
 ## Usage example
