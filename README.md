@@ -20,7 +20,7 @@ Simple parser of snow cover table from [hydro.imgw.pl](https://hydro.imgw.pl) we
 pkg install poppler bash wget busybox
 wget https://raw.githubusercontent.com/PawelSuwinski/snowMonit/main/snow.sh
 chmod a+x snow.sh
-./snow.sh -h
+bash snow.sh -h
 ```
 
 ### Desktop shortcut icon
