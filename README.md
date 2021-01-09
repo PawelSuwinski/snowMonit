@@ -21,6 +21,18 @@ chmod a+x snow.sh
 ./snow.sh -h
 ```
 
+### Desktop shortcut icon
+
+Android Termux shell:
+
+```
+mkdir .shortcuts
+echo -e "#\!/data/data/com.termux/files/usr/bin/bash\nbash ~/snow.sh -m 10\nread" > . shortcuts/snow
+chmod a+x  .shortcuts/snow
+```
+And add Termux Widget to desktop.
+
+
 ## Usage example
 
 ### Show all stations with snow cover greater than 10cm
