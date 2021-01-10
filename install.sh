@@ -1,4 +1,4 @@
-[[ -z $BINDIR ]] && BINDIR=$HOME
+[[ -z $BINDIR ]] && BINDIR='~'
 
 echo 'Installing snow.sh parser...'
 wget -q -O "$BINDIR/snow.sh" https://raw.githubusercontent.com/PawelSuwinski/snowMonit/main/snow.sh
