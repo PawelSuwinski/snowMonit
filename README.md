@@ -12,7 +12,7 @@ Simple parser of snow cover table from [hydro.imgw.pl](https://hydro.imgw.pl) we
 
 ## Installation - Android
 
-1. Install [Termux](https://termux.com) and Termux Widget add-on.
+1. Install [Termux](https://termux.com) and Termux Widget add-on (from F-Droid).
 
 2. Open Termux and execute:
 
