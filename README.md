@@ -18,22 +18,11 @@ Simple parser of snow cover table from [hydro.imgw.pl](https://hydro.imgw.pl) we
 
 ```
 pkg install poppler bash wget busybox
-wget https://raw.githubusercontent.com/PawelSuwinski/snowMonit/main/snow.sh
-chmod a+x snow.sh
+wget -q -O - https://raw.githubusercontent.com/PawelSuwinski/snowMonit/main/install.sh | bash
 bash snow.sh -h
 ```
 
-### Desktop shortcut icon
-
-1. Open Termux and execute:
-
-```
-mkdir .shortcuts
-echo -e '#!/data/data/com.termux/files/usr/bin/bash\nbash ~/snow.sh -m 10\nread' > .shortcuts/snow
-chmod a+x  .shortcuts/snow
-```
-
-2. Add Termux Widget to desktop pointing to _snow_ shortcut.
+3. Add Termux Widget to desktop pointing to _snow_ shortcut.
 
 
 ## Usage example
