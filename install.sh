@@ -8,7 +8,7 @@ echo 'Adding Termux Widget shortcut...'
 [[ ! -d .shortcuts ]] && mkdir .shortcuts
 cat <<EOT > .shortcuts/snow
 #!/data/data/com.termux/files/usr/bin/bash
-bash "$BINDIR/snow.sh" -m 10
+bash $BINDIR/snow.sh -m 10
 read
 EOT
 chmod a+x .shortcuts/snow
