@@ -29,7 +29,7 @@ bash snow.sh -h
 
 ```
 mkdir .shortcuts
-echo -e '#!/data/data/com.termux/files/usr/bin/bash\nbash ~/snow.sh -m 10\nread' > . shortcuts/snow
+echo -e '#!/data/data/com.termux/files/usr/bin/bash\nbash ~/snow.sh -m 10\nread' > .shortcuts/snow
 chmod a+x  .shortcuts/snow
 ```
 
