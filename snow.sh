@@ -82,7 +82,7 @@ val() { local V=${1##*:${2}:}; echo -n "${V%%:*}"; }
     [[ $row == *:H:[0-9]* ]] && H=$(val "$row" 'H')
     [[ $G =~ ^0(,0)?$ && $H =~ ^0(,0)?$ ]] && continue
     echo "${row%%:*};$G;$H"
-  done | tr '[ŁŚŻ]' '[LSZ]' | sort > "${filePath}.csv"
+  done | sort > "${filePath}.csv"
 
 # parse output
 parse() {
