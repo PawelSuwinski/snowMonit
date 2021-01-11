@@ -10,7 +10,7 @@ set -e
 
 URL='https://res4.imgw.pl/products/hydro/monitor-lite-products/Pokrywa_sniezna.pdf'
 TYPE=('' puszysty świeży krupiasty zsiadły zbity mokry szreń lodoszreń firn szadź)
-FORMAT='%s: %.0f / %.0f [cm] %s\n'
+FORMAT='%s:%.0s %.0f / %.0f [cm] %s\n'
 DATETIME=$(date '+%Y%m%d%H%M%S')
 
 [[ -z $TMPDIR ]] && TMPDIR='/tmp'
@@ -23,7 +23,7 @@ Usage: $0 [-h] [-f FORMAT] [-m MIN] [-u URL] [location ...]
 
    -h        help
    -f FORMAT printf output format, default '$FORMAT',
-             where respectively that are B, G, H, I columns
+             where respectively that are B, E, G, H, I columns
    -m MIN    mininum depth [cm]
    -u URL    data url, default: $URL
 
@@ -102,7 +102,7 @@ parse() {
   IFS=';'; while read B E G H I; do
     [[ -n $MIN && ${G%,*} -lt $MIN && ${H%,*} -lt $MIN ]] && continue
     [[ -n $DATE ]] && echo $DATE && unset DATE
-    printf "$FORMAT" "$B" "${G/,/.}" "${H/,/.}" "${TYPE[$I]}"
+    printf "$FORMAT" "$B" "$E" "${G/,/.}" "${H/,/.}" "${TYPE[$I]}"
   done
 }
 [[ -z $1 ]] && parse < "${filePath}.csv" ||
