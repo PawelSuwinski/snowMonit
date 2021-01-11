@@ -2,7 +2,7 @@
 q() { echo -n "$1 "; read choice <&1; [[ -n $2 && -z $choice ]] && choice=$2 ; }
 
 echo 'Installing snow.sh parser...'
-wget -q -O - https://raw.githubusercontent.com/PawelSuwinski/snowMonit/main/snow.sh | 
+wget -q -O - https://raw.githubusercontent.com/PawelSuwinski/snowMonit/main/snow.sh |
   sed -E "s#(/bin/bash)#$PREFIX\1#" > $BINDIR/snow.sh
 chmod a+x $BINDIR/snow.sh
 
@@ -20,6 +20,8 @@ read
 EOT
 chmod a+x .shortcuts/snow
 
+[[ -z $TMPDIR ]] && TMPDIR=/tmp
+find $TMPDIR -name "snow.sh-*" -delete 2> /dev/null
 
 q 'Set crond job service [y/N]?' 'N'
 [[ $choice != [yY] ]] && echo Done. && exit 0
@@ -33,14 +35,14 @@ STATIONS=$choice
 
 echo 'Adding crontab entry...'
 
-( 
+(
 crontab -l 2> /dev/null | grep -v snowMonit
 echo -n '*/30 8-15 * 1-5,10-12 * DATE=$(date +%Y%m%d); [[ -z $TMPDIR ]] && TMPDIR=/tmp; '
 echo -n "SNOW='$BINDIR/snow.sh -m $MIN $STATIONS'; "
 echo -n 'LCK=$TMPDIR/snow.sh-${DATE}.lck; [[ ! -e $LCK ]] && [[ $($SNOW) == ${DATE}* ]] && '
-echo 'touch $LCK && $SNOW | termux-notification -t snowMonit' 
+echo 'touch $LCK && $SNOW | termux-notification -t snowMonit'
 ) | crontab - 2> /dev/null
- 
+
 echo 'Adding Termux:Boot crond service...'
 [[ ! -d .termux/boot ]] && mkdir -p .termux/boot
 cat <<EOT > .termux/boot/snow
