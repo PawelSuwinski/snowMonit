@@ -6,23 +6,26 @@ Simple parser of snow cover table from [hydro.imgw.pl](https://hydro.imgw.pl) we
  
  - pdftotext >= 20.0.0 (poppler/poppler-utils package)
  - wget (full version for SSL support, tested with ^1.20)
- - sed, grep, find, sort, tr, date, basename (standalone or busybox)
+ - busybox
  - bash
 
 
 ## Installation - Android
 
 1. Install [Termux](https://termux.com) and Termux Widget add-on (from F-Droid).
+Additionally for notification alerts install also Termux API and Termux Boot add-ons.
 
 2. Open Termux and execute:
 
 ```
-pkg install poppler bash wget busybox
+pkg install poppler bash wget busybox termux-tools
 wget -q -O - https://raw.githubusercontent.com/PawelSuwinski/snowMonit/main/install.sh | bash
-bash snow.sh -h
+~/snow.sh -h
 ```
 
 3. Add Termux Widget to desktop pointing to _snow_ shortcut.
+
+4. Run Termux Boot once if cron job notification alerts was chosen.
 
 
 ## Usage example
