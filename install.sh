@@ -1,5 +1,5 @@
 [[ -z $BINDIR ]] && BINDIR=$HOME
-q() { echo -n "$1 "; read choice <&1; [[ -n $2 && -z $choice ]] && choice=$2 ; }
+q() { echo -n "$1"; read choice <&1; [[ -n $2 && -z $choice ]] && choice=$2 ; }
 
 echo 'Installing snow.sh parser...'
 wget -q -O - https://raw.githubusercontent.com/PawelSuwinski/snowMonit/main/snow.sh |
