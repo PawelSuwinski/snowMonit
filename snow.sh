@@ -8,8 +8,9 @@
 set -e
 
 URL='https://res4.imgw.pl/products/hydro/monitor-lite-products/Pokrywa_sniezna.pdf'
+TYPE=('' puszysty świeży krupiasty zsiadły zbity mokry szreń lodoszreń firn szadź)
+FORMAT='%s: %.0f / %.0f [cm] %s\n'
 DATETIME=$(date '+%Y%m%d%H%M%S')
-FORMAT='%s: %.0f / %0.f [cm]\n'
 
 [[ -z $TMPDIR ]] && TMPDIR='/tmp'
 fileName="$(basename $0)-${DATETIME:0:8}"
@@ -64,34 +65,40 @@ echo $DATETIME >> "${filePath}.log"
 find $TMPDIR -name "${fileName%-*}-*" -mtime +1 -delete || true
 
 # fetch pdf and parse to csv, force if data is old
-sedCmd() { echo -n "s#.*left:${1}px.*>([^>]+)</p>#:${2}:\1#p"; }
+sedCmd() {
+  [[ -n $3 ]] && P=$3 || P='[^>]+'
+  echo -n "s#.*left:${1}px.*>(${P})</p>#:${2}:\1#p"
+}
 val() { local V=${1##*:${2}:}; echo -n "${V%%:*}"; }
-[[ ! -s "${filePath}.csv" || $(head -1 "${filePath}.csv") != ${DATETIME:0:8} ]] &&
+getDate() { local DATE; read DATE < "${filePath}.csv"; echo -n $DATE; }
+[[ ! -s "${filePath}.csv" || $(getDate) != ${DATETIME:0:8} ]] &&
   wget -a "${filePath}.log" -O "${filePath}.pdf" "${URL}" &&
   pdftohtml -i -s -stdout "${filePath}.pdf" | sed -nr \
     -e 's/&#160;/ /g' \
     -e 's/.*([0-9]{2})\.([0-9]{2})\.([0-9]{4}).*/:DATE:\3\2\1/p' \
     -e "$(sedCmd '[3-5][0-9]' 'B')" \
-    -e "$(sedCmd '5[4-9][0-9]' 'G')" \
-    -e "$(sedCmd '6[0-4][0-9]' 'H')" |
+    -e "$(sedCmd '5[4-9][0-9]' 'G' '[0-9]+(,[0-9]+)?')" \
+    -e "$(sedCmd '6[0-4][0-9]' 'H' '[0-9]+(,[0-9]+)?')" \
+    -e "$(sedCmd '6[5-6][0-9]' 'I' '[0-9]')" |
   tr -d "\n" | sed 's/:B:/\n/g' | while read row; do
-    G=0; H=0
+    [[ $row == *:G:[0-9]* ]] && G=$(val "$row" 'G') || G=0
+    [[ $row == *:H:[0-9]* ]] && H=$(val "$row" 'H') || H=0
+    [[ $row == *:I:[0-9]* ]] && I=$(val "$row" 'I') || I=0
+    [[ $G =~ ^0(,0)?$ && $H =~ ^0(,0)?$ ]] && continue
     [[ -z $DATE && $row == *:DATE:[0-9]* ]] &&
       val "$row" 'DATE' && echo
-    [[ $row == *:G:[0-9]* ]] && G=$(val "$row" 'G')
-    [[ $row == *:H:[0-9]* ]] && H=$(val "$row" 'H')
-    [[ $G =~ ^0(,0)?$ && $H =~ ^0(,0)?$ ]] && continue
-    echo "${row%%:*};$G;$H"
+    B=${row%%:*}; [[ $B == Ł* ]] && B=${B/Ł/L}; [[ $B == Ś* ]] && B=${B/Ś/S}
+    echo "$B;$G;$H;$I"
   done | sort > "${filePath}.csv"
 
 # parse output
 parse() {
-  read DATE;
+  local DATE; read DATE;
   LC_NUMERIC=C
-  IFS=';'; while read B G H; do
+  IFS=';'; while read B G H I; do
     [[ -n $MIN && ${G%,*} -lt $MIN && ${H%,*} -lt $MIN ]] && continue
     [[ -n $DATE ]] && echo $DATE && unset DATE
-    printf "$FORMAT" "$B" "${G/,/.}" "${H/,/.}"
+    printf "$FORMAT" "$B" "${G/,/.}" "${H/,/.}" "${TYPE[$I]}"
   done
 }
 [[ -z $1 ]] && parse < "${filePath}.csv" ||
