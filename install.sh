@@ -53,6 +53,7 @@ termux-wake-lock
 EOT
 chmod a+x .termux/boot/snow
 
-[[ $(pgrep -x crond) ]] && pkill -x -1 crond || .termux/boot/snow
+pkill -x crond
+.termux/boot/snow
 
 echo Done.
