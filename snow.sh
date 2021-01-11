@@ -24,7 +24,7 @@ Usage: $0 [-h] [-f FORMAT] [-m MIN] [-u URL] [location ...]
    -h        help
    -f FORMAT printf output format, default '$FORMAT',
              where respectively that are B, E, G, H, I columns
-   -m MIN    mininum depth [cm]
+   -m MIN    minimum depth [cm]
    -u URL    data url, default: $URL
 
   location  location pcre pattern to match (case insensitive)
