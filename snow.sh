@@ -1,7 +1,8 @@
 #! /bin/bash
 #
 # @author Paweł Suwiński, psuw@wp.pl
-# @version 202101081200
+# @version 202101111900
+# @url https://github.com/PawelSuwinski/snowMonit
 # @licence MIT
 # --------------------------------------------------
 
@@ -18,14 +19,15 @@ filePath="$TMPDIR/$fileName"
 
 usage() {
   cat <<EOT
-Usage: $0 [-h] [-f FORMAT] [-m MIN] [-u URL] [station ...]
+Usage: $0 [-h] [-f FORMAT] [-m MIN] [-u URL] [location ...]
 
    -h        help
-   -f FORMAT printf output format, default '$FORMAT'
+   -f FORMAT printf output format, default '$FORMAT',
+             where respectively that are B, G, H, I columns
    -m MIN    mininum depth [cm]
    -u URL    data url, default: $URL
 
-  station  station pcre pattern to match (case insensitive)
+  location  location pcre pattern to match (case insensitive)
 
   Files:
 
@@ -77,25 +79,27 @@ getDate() { local DATE; read DATE < "${filePath}.csv"; echo -n $DATE; }
     -e 's/&#160;/ /g' \
     -e 's/.*([0-9]{2})\.([0-9]{2})\.([0-9]{4}).*/:DATE:\3\2\1/p' \
     -e "$(sedCmd '[3-5][0-9]' 'B')" \
+    -e "$(sedCmd '4[1-2][0-9]' 'E')" \
     -e "$(sedCmd '5[4-9][0-9]' 'G' '[0-9]+(,[0-9]+)?')" \
     -e "$(sedCmd '6[0-4][0-9]' 'H' '[0-9]+(,[0-9]+)?')" \
     -e "$(sedCmd '6[5-6][0-9]' 'I' '[0-9]')" |
   tr -d "\n" | sed 's/:B:/\n/g' | while read row; do
-    [[ $row == *:G:[0-9]* ]] && G=$(val "$row" 'G') || G=0
-    [[ $row == *:H:[0-9]* ]] && H=$(val "$row" 'H') || H=0
-    [[ $row == *:I:[0-9]* ]] && I=$(val "$row" 'I') || I=0
-    [[ $G =~ ^0(,0)?$ && $H =~ ^0(,0)?$ ]] && continue
     [[ -z $DATE && $row == *:DATE:[0-9]* ]] &&
       val "$row" 'DATE' && echo
+    [[ $row == *:G:[0-9]* ]] && G=$(val "$row" 'G') || G=0
+    [[ $row == *:H:[0-9]* ]] && H=$(val "$row" 'H') || H=0
+    [[ $G =~ ^0(,0)?$ && $H =~ ^0(,0)?$ ]] && continue
+    [[ $row == *:E:* ]] && E=$(val "$row" 'E') || E=''
+    [[ $row == *:I:[0-9]* ]] && I=$(val "$row" 'I') || I=0
     B=${row%%:*}; [[ $B == Ł* ]] && B=${B/Ł/L}; [[ $B == Ś* ]] && B=${B/Ś/S}
-    echo "$B;$G;$H;$I"
+    echo "$B;$E;$G;$H;$I"
   done | sort > "${filePath}.csv"
 
 # parse output
 parse() {
   local DATE; read DATE;
   LC_NUMERIC=C
-  IFS=';'; while read B G H I; do
+  IFS=';'; while read B E G H I; do
     [[ -n $MIN && ${G%,*} -lt $MIN && ${H%,*} -lt $MIN ]] && continue
     [[ -n $DATE ]] && echo $DATE && unset DATE
     printf "$FORMAT" "$B" "${G/,/.}" "${H/,/.}" "${TYPE[$I]}"

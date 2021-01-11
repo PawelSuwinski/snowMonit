@@ -3,7 +3,7 @@ Simple parser of snow cover table from [hydro.imgw.pl](https://hydro.imgw.pl) we
 
 
 ## Requirements
- 
+
  - pdftotext >= 20.0.0 (poppler/poppler-utils package)
  - wget (full version for SSL support, tested with ^1.20)
  - busybox
@@ -18,9 +18,8 @@ Additionally for notification alerts install also Termux API and Termux Boot add
 2. Open Termux and execute:
 
 ```
-pkg install poppler bash wget busybox termux-tools
+pkg install poppler bash wget busybox
 wget -q -O - https://raw.githubusercontent.com/PawelSuwinski/snowMonit/main/install.sh | bash
-~/snow.sh -h
 ```
 
 3. Add Termux Widget to desktop pointing to _snow_ shortcut.
@@ -30,18 +29,23 @@ wget -q -O - https://raw.githubusercontent.com/PawelSuwinski/snowMonit/main/inst
 
 ## Usage example
 
+### Show help
+
+`~/snow.sh -h`
+
 ### Show all stations with snow cover greater than 10cm
 
 `./snow.sh -m 10`
 
-### Show chosen stations
+### Show chosen stations and regions
 
-`./snow.sh milejewo chojnice`
+`./snow.sh milejewo chojnice podlaskie`
 
-### Send notification when cover meets requirements
-
-Cronjob / termux-job-sheduler case.
+### View and change default cron alert notification setting
 
 ```
-MSG=$(./snow.sh -m 10 milejewo chojnice); [[ -n $MSG ]] && termux-notification -t WARUN <<< $MSG
+crontab -l
+crontab -e
 ```
+
+See [man crontab](https://linux.die.net/man/5/crontab).
