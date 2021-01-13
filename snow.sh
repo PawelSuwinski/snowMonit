@@ -82,7 +82,7 @@ getDate() { local DATE; read DATE < "${filePath}.csv"; echo -n $DATE; }
     -e "$(sedCmd '4[1-2][0-9]' 'E')" \
     -e "$(sedCmd '5[4-9][0-9]' 'G' '[0-9]+(,[0-9]+)?')" \
     -e "$(sedCmd '6[0-4][0-9]' 'H' '[0-9]+(,[0-9]+)?')" \
-    -e "$(sedCmd '6[5-6][0-9]' 'I' '[0-9]')" |
+    -e "$(sedCmd '6[5-7][0-9]' 'I' '[0-9]')" |
   tr -d "\n" | sed 's/:B:/\n/g' | while read row; do
     [[ -z $DATE && $row == *:DATE:[0-9]* ]] &&
       val "$row" 'DATE' && echo
