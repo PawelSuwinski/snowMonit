@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/bin/bash
 #
 # @author Paweł Suwiński, psuw@wp.pl
 # @version 202101111900
