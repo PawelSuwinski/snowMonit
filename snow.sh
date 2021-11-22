@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/data/data/com.termux/files/usr/bin/bash
 #
 # @author Paweł Suwiński, psuw@wp.pl
 # @version 202101111900
@@ -80,7 +80,7 @@ getDate() { local DATE; read DATE < "${filePath}.csv"; echo -n $DATE; }
     -e 's/.*([0-9]{2})\.([0-9]{2})\.([0-9]{4}).*/:DATE:\3\2\1/p' \
     -e "$(sedCmd '[3-5][0-9]' 'B')" \
     -e "$(sedCmd '4[1-2][0-9]' 'E')" \
-    -e "$(sedCmd '5[4-9][0-9]' 'G' '[0-9]+(,[0-9]+)?')" \
+    -e "$(sedCmd '5[4-9][0-9]' 'G' '[0-9]+,[0-9]+')" \
     -e "$(sedCmd '6[0-4][0-9]' 'H' '[0-9]+(,[0-9]+)?')" \
     -e "$(sedCmd '6[5-7][0-9]' 'I' '[0-9]')" |
   tr -d "\n" | sed 's/:B:/\n/g' | while read row; do
