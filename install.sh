@@ -26,12 +26,18 @@ find $TMPDIR -name "snow.sh-*" -delete 2> /dev/null
 q 'Set crond job service [y/N]?' 'N'
 [[ $choice != [yY] ]] && echo Done. && exit 0
 
+# workaround for busybox applets install issue
+for bin in crond crontab ; do
+    which $bin || ln -s $PREFIX/bin/busybox $PREFIX/bin/$bin
+done
+
 q 'Set snow MIN [10cm]: '
 [[ $choice =~ ^(0|[1-9][0-9]+)$ ]] && MIN=$choice || MIN=10
 q 'Set location filter [pomorskie mazurskie]: ' 'pomorskie mazurskie'
 STATIONS=$choice
 
 [[ ! $(which termux-notification) ]] && pkg install termux-api
+[[ ! -e $PREFIX/var/spool/cron/crontabs ]] && mkdir -p $PREFIX/var/spool/cron/crontabs
 
 echo 'Adding crontab entry...'
 
